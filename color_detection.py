@@ -1,72 +1,66 @@
 import cv2
 import numpy as np
 import pandas as pd
-import argparse
 
-#Creating argument parser to take image path from command line
-ap = argparse.ArgumentParser()
-ap.add_argument('-i', '--image', required=True, help="Image Path")
-args = vars(ap.parse_args())
-img_path = args['image']
 
-#Reading the image with opencv
-img = cv2.imread(img_path)
-
-#declaring global variables (are used later on)
+# Reading the image with OpenCV
+img = cv2.imread(r"C:\Users\hp\Downloads\43362 (1).jpg")
+img = cv2.resize(img, (800, 600))
+# Declaring global variables
 clicked = False
 r = g = b = xpos = ypos = 0
 
-#Reading csv file with pandas and giving names to each column
-index=["color","color_name","hex","R","G","B"]
-csv = pd.read_csv('colors.csv', names=index, header=None)
+# Reading CSV file with pandas and giving names to each column
+columns = ["color", "color_name", "hex", "r", "g", "b"]
+csv = pd.read_csv(r"C:\Users\hp\Downloads\python-project-color-detection\colors.csv", names=columns, header=None)
 
-#function to calculate minimum distance from all colors and get the most matching color
-def getColorName(R,G,B):
+
+def get_color_name(r, g, b):
+    """
+    Function to calculate minimum distance from all colors and get the most matching color
+    """
     minimum = 10000
     for i in range(len(csv)):
-        d = abs(R- int(csv.loc[i,"R"])) + abs(G- int(csv.loc[i,"G"]))+ abs(B- int(csv.loc[i,"B"]))
-        if(d<=minimum):
+        d = abs(r - int(csv.loc[i, "r"])) + abs(g - int(csv.loc[i, "g"])) + abs(b - int(csv.loc[i, "b"]))
+        if d <= minimum:
             minimum = d
-            cname = csv.loc[i,"color_name"]
-    return cname
+            color_name = csv.loc[i, "color_name"]
+    return color_name
 
-#function to get x,y coordinates of mouse double click
-def draw_function(event, x,y,flags,param):
+
+def draw_function(event, x, y, flags, param):
+    """
+    Function to get x,y coordinates of mouse double click
+    """
+    global b, g, r, xpos, ypos, clicked
     if event == cv2.EVENT_LBUTTONDBLCLK:
-        global b,g,r,xpos,ypos, clicked
         clicked = True
-        xpos = x
-        ypos = y
-        b,g,r = img[y,x]
-        b = int(b)
-        g = int(g)
-        r = int(r)
-       
-cv2.namedWindow('image')
-cv2.setMouseCallback('image',draw_function)
+        xpos, ypos = x, y
+        b, g, r = img[y, x]
 
-while(1):
 
-    cv2.imshow("image",img)
-    if (clicked):
-   
-        #cv2.rectangle(image, startpoint, endpoint, color, thickness)-1 fills entire rectangle 
-        cv2.rectangle(img,(20,20), (750,60), (b,g,r), -1)
+cv2.namedWindow("image")
+cv2.setMouseCallback("image", draw_function)
 
-        #Creating text string to display( Color name and RGB values )
-        text = getColorName(r,g,b) + ' R='+ str(r) +  ' G='+ str(g) +  ' B='+ str(b)
-        
-        #cv2.putText(img,text,start,font(0-7),fontScale,color,thickness,lineType )
-        cv2.putText(img, text,(50,50),2,0.8,(255,255,255),2,cv2.LINE_AA)
+while True:
+    cv2.imshow("image", img)
 
-        #For very light colours we will display text in black colour
-        if(r+g+b>=600):
-            cv2.putText(img, text,(50,50),2,0.8,(0,0,0),2,cv2.LINE_AA)
-            
-        clicked=False
+    if clicked:
+        # Creating a rectangle to show the color in the GUI
+        cv2.rectangle(img, (20,20), (750,60), (int(b), int(g), int(r)), -1)
 
-    #Break the loop when user hits 'esc' key    
-    if cv2.waitKey(20) & 0xFF ==27:
+        # Creating text string to display (color name and RGB values)
+        color_name = get_color_name(r, g, b)
+        text = f"{color_name} R={r} G={g} B={b}"
+
+        # If the color is light, we display the text in black color
+        font_color = (0, 0, 0) if r + g + b >= 600 else (255, 255, 255)
+        cv2.putText(img, text, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, font_color, 2, cv2.LINE_AA)
+
+        clicked = False
+
+    # Break the loop when the user hits 'esc' key
+    if cv2.waitKey(20) == 27:
         break
-    
+
 cv2.destroyAllWindows()
