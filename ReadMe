@@ -1,0 +1,5 @@
+This code implements a color detection system using Python, OpenCV, and Pandas libraries.
+When the user clicks on any part of an image displayed on the screen, the program detects the color of that pixel and displays the corresponding color name and RGB values on the screen. 
+The color names and their corresponding RGB values are stored in a CSV file, which is read by the program using the Pandas library. 
+The program then calculates the minimum distance between the selected color and all colors in the CSV file to find the most matching color name. 
+The program uses OpenCV functions to draw rectangles and text on the image. The program is run in an infinite loop until the user presses 'esc' to exit it.
