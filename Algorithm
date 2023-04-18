@@ -1,0 +1,15 @@
+Import necessary libraries such as OpenCV, numpy, pandas, and argparse.
+Read an image using the OpenCV imread() function.
+Define global variables for clicked, r, g, b, xpos, and ypos.
+Read the CSV file containing color names and values using pandas read_csv() function.
+Define a function to calculate the minimum distance from all colors and return the most matching color name.
+Define a function to get x and y coordinates of the mouse double click.
+Create a window and bind the draw_function() function to it using the OpenCV namedWindow() and setMouseCallback() functions.
+Continuously show the image and wait for a mouse double click event.
+When a mouse double click event occurs, get the RGB values of the pixel where the event occurred.
+Create a rectangle and display the RGB values in it.
+Use the getColorName() function to get the color name based on the RGB values.
+Create a text string containing the color name and RGB values.
+Display the text string using the OpenCV putText() function.
+If the color is very light, display the text string in black color.
+If the 'esc' key is pressed, break the loop and close the window.
